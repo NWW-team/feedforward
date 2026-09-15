@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Feedforward — verbetersuggesties uit bezoekersfeedback</title>
+<style>
+  :root {
+    --blauw: #154273;
+    --blauw-licht: #e5eef7;
+    --tekst: #1b1b1b;
+    --grijs: #5b6670;
+    --lijn: #d6dce2;
+    --vlak: #ffffff;
+    --grond: #f3f5f7;
+    --waarschuwing: #ffb612;
+    --waarschuwing-vlak: #fff6e0;
+    --rood: #a9061b;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--grond);
+    color: var(--tekst);
+    font: 16px/1.55 "RO Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  /* Voorbeelddata-balk: moet op elk scherm zichtbaar zijn */
+  .demobalk {
+    background: var(--waarschuwing);
+    color: #1b1b1b;
+    font-weight: 700;
+    padding: 10px 0;
+  }
+  .demobalk .wrap { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .demobalk span { font-weight: 400; }
+
+  header.hoofd { background: var(--blauw); color: #fff; padding: 28px 0 32px; }
+  header.hoofd h1 { margin: 0 0 6px; font-size: 1.7rem; line-height: 1.2; }
+  header.hoofd p { margin: 0; color: #cfdcea; max-width: 60ch; }
+
+  main { padding: 28px 0 8px; }
+  h2 { font-size: 1.25rem; margin: 0 0 4px; }
+  .subtitel { color: var(--grijs); margin: 0 0 20px; }
+
+  ul.paginas { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .kaart {
+    background: var(--vlak);
+    border: 1px solid var(--lijn);
+    border-left: 5px solid var(--blauw);
+    border-radius: 4px;
+  }
+  a.kaartlink {
+    display: block; padding: 16px 18px; text-decoration: none; color: inherit;
+  }
+  a.kaartlink:hover { background: var(--blauw-licht); }
+  a.kaartlink:focus-visible { outline: 3px solid var(--waarschuwing); outline-offset: -3px; }
+  .kaart h3 { margin: 0 0 6px; font-size: 1.05rem; color: var(--blauw); text-decoration: underline; }
+  .kaart p { margin: 0 0 10px; color: var(--tekst); }
+  .cijfers { display: flex; gap: 16px; flex-wrap: wrap; color: var(--grijs); font-size: .875rem; }
+  .cijfers b { color: var(--rood); font-variant-numeric: tabular-nums; }
+
+  .terug { display: inline-block; margin-bottom: 16px; color: var(--blauw); font-weight: 600; }
+  .paginakop { background: var(--vlak); border: 1px solid var(--lijn); border-radius: 4px; padding: 18px; margin-bottom: 20px; }
+  .paginakop h2 { margin-bottom: 8px; }
+  .paginakop .bron { font-size: .875rem; word-break: break-all; }
+
+  .oorzaak {
+    background: var(--vlak); border: 1px solid var(--lijn); border-radius: 4px;
+    padding: 18px; margin-bottom: 16px;
+  }
+  .oorzaak h3 { margin: 0 0 4px; font-size: 1.1rem; }
+  .telling { color: var(--grijs); font-size: .875rem; margin: 0 0 10px; }
+  .oorzaak > p.toelichting { margin: 0 0 16px; }
+  h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--grijs); margin: 0 0 8px; }
+
+  blockquote {
+    margin: 0 0 8px; padding: 8px 0 8px 14px;
+    border-left: 3px solid var(--lijn); color: #333;
+  }
+  blockquote footer { color: var(--grijs); font-size: .8rem; margin-top: 2px; }
+
+  ol.suggesties { margin: 0; padding-left: 1.25em; }
+  ol.suggesties li { margin-bottom: 8px; }
+  ol.suggesties li:last-child { margin-bottom: 0; }
+
+  .bewijs { background: var(--grond); border-radius: 4px; padding: 14px; margin-bottom: 16px; }
+  .advies { border: 1px solid var(--blauw-licht); background: var(--blauw-licht); border-radius: 4px; padding: 14px; }
+
+  button.kopieer {
+    margin-top: 14px; font: inherit; font-weight: 600;
+    background: var(--blauw); color: #fff; border: 0; border-radius: 4px;
+    padding: 10px 16px; cursor: pointer;
+  }
+  button.kopieer:hover { background: #0f3057; }
+  button.kopieer:focus-visible { outline: 3px solid var(--waarschuwing); outline-offset: 2px; }
+
+  details.ruwe { margin-top: 8px; }
+  details.ruwe summary { cursor: pointer; color: var(--blauw); font-weight: 600; padding: 8px 0; }
+  details.ruwe ul { margin: 8px 0 0; padding-left: 1.1em; color: #333; }
+  details.ruwe li { margin-bottom: 6px; }
+
+  footer.verantwoording {
+    margin-top: 32px; border-top: 4px solid var(--blauw);
+    background: var(--vlak); padding: 22px 0 40px; color: var(--grijs); font-size: .9rem;
+  }
+  footer.verantwoording h2 { font-size: 1rem; color: var(--tekst); }
+  footer.verantwoording dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 12px 0; }
+  footer.verantwoording dt { font-weight: 600; color: var(--tekst); }
+  footer.verantwoording dd { margin: 0; }
+  footer.verantwoording .let-op { color: var(--tekst); background: var(--waarschuwing-vlak); border-left: 4px solid var(--waarschuwing); padding: 10px 14px; }
+
+  @media (max-width: 480px) {
+    header.hoofd h1 { font-size: 1.35rem; }
+    footer.verantwoording dl { grid-template-columns: 1fr; gap: 0 0; }
+    footer.verantwoording dd { margin-bottom: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demobalk"><div class="wrap">
+  <strong>Voorbeelddata</strong>
+  <span>Deze feedback is verzonnen voor een prototype. Het zijn geen echte reacties van bezoekers.</span>
+</div></div>
+
+<header class="hoofd"><div class="wrap">
+  <h1>Feedforward</h1>
+  <p>Wat gaat er structureel mis op onze pagina's over reisdocumenten — en wat kun je eraan doen? Op basis van de feedback die bezoekers achterlaten.</p>
+</div></header>
+
+<main class="wrap" id="scherm" tabindex="-1"></main>
+
+<footer class="verantwoording"><div class="wrap">
+  <h2>Verantwoording</h2>
+  <dl id="verantwoording"></dl>
+  <p class="let-op" id="disclaimer"></p>
+</div></footer>
+
+<script id="feedforward-data" type="application/json">{
+  "meta": {
+    "is_voorbeelddata": true,
+    "bron": "Mopinion (voorbeelddata — niet van echte bezoekers)",
+    "periode": "1 mei 2026 t/m 31 augustus 2026",
+    "export_datum": "2026-09-15",
+    "analyse_datum": "2026-09-15",
+    "onderwerp": "Reisdocumenten (paspoort en identiteitskaart)",
+    "disclaimer": "De oorzaken en verbetersuggesties op deze pagina zijn door AI gegenereerd op basis van de onderstaande feedback. Ze zijn niet gecontroleerd op feitelijke juistheid en zijn geen redactioneel besluit."
+  },
+  "paginas": [
+    {
+      "id": "paspoort-aanvragen-buitenland",
+      "titel": "Paspoort of identiteitskaart aanvragen in het buitenland",
+      "url": "https://www.nederlandwereldwijd.nl/paspoort-id-kaart/aanvragen-buitenland",
+      "samenvatting": "Bezoekers vinden niet waár zij in hun eigen land terechtkunnen; de pagina blijft bij 'een Nederlandse vertegenwoordiging'.",
+      "oorzaken": [
+        {
+          "titel": "De lezer vindt niet welke balie in zijn eigen land de aanvraag behandelt",
+          "toelichting": "De pagina spreekt over 'een Nederlandse ambassade of consulaat' zonder de lezer naar zijn eigen land te brengen. Wie in een groot land woont, of te maken heeft met honoraire consulaten, blijft met de belangrijkste vraag zitten: waar moet ik naartoe?",
+          "citaat_ids": [
+            "f001",
+            "f002",
+            "f003",
+            "f010",
+            "f013"
+          ],
+          "suggesties": [
+            "Zet bovenaan de pagina één keuzeveld 'In welk land woont u?' dat direct doorgaat naar de juiste vertegenwoordiging, met adres en of daar ook daadwerkelijk aangevraagd kan worden.",
+            "Vervang de zin 'bij een Nederlandse ambassade of consulaat' door een link naar de landenlijst. Nu moet de lezer zelf gaan zoeken op een andere pagina."
+          ]
+        },
+        {
+          "titel": "De doorlooptijd staat nergens",
+          "toelichting": "Mensen plannen een reis en willen weten hoeveel weken zij moeten rekenen. Die informatie ontbreekt, terwijl het bij een aanvraag in Nederland wel bekend is.",
+          "citaat_ids": [
+            "f004",
+            "f005",
+            "f011",
+            "f016"
+          ],
+          "suggesties": [
+            "Voeg een blok 'Hoe lang duurt het?' toe met een reken-vanaf-vandaag-indicatie, en benoem expliciet dat de tijd per land verschilt als dat zo is.",
+            "Noem in datzelfde blok hoe lang van tevoren je een aanvraag moet doen; dat is de vraag achter de vraag."
+          ]
+        },
+        {
+          "titel": "Het verschil tussen paspoort en identiteitskaart is niet uitgelegd voor wie buiten de EU woont",
+          "toelichting": "Voor bezoekers buiten de EU is niet duidelijk of een identiteitskaart voor hen überhaupt zinvol of aanvraagbaar is.",
+          "citaat_ids": [
+            "f007",
+            "f008",
+            "f015"
+          ],
+          "suggesties": [
+            "Zet een korte vergelijking neer: wat kun je met een paspoort, wat met een identiteitskaart, en waarom is de identiteitskaart buiten de EU beperkt bruikbaar.",
+            "Beantwoord expliciet de vraag 'kan ik in dit land óók een identiteitskaart aanvragen, of alleen een paspoort?'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "afspraak-ambassade-consulaat",
+      "titel": "Een afspraak maken bij een ambassade of consulaat",
+      "url": "https://www.nederlandwereldwijd.nl/paspoort-id-kaart/afspraak-maken",
+      "samenvatting": "Het afsprakensysteem toont geen plekken en de pagina legt niet uit wat je dan moet doen.",
+      "oorzaken": [
+        {
+          "titel": "Er zijn geen afspraken beschikbaar en de pagina zegt niet wat je dan moet doen",
+          "toelichting": "Bezoekers komen op een leeg agendascherm en keren terug naar de informatiepagina voor een uitweg. Die staat er niet, dus wordt de feedbacktool het klachtenloket.",
+          "citaat_ids": [
+            "f017",
+            "f018",
+            "f021",
+            "f026"
+          ],
+          "suggesties": [
+            "Benoem op de pagina zelf hoe ver vooruit de agenda openstaat en op welk moment nieuwe plekken vrijkomen.",
+            "Voeg een alinea 'Geen plek beschikbaar?' toe met het alternatief: wachten op nieuwe plekken, een andere post, of contact bij een aantoonbaar spoedgeval."
+          ]
+        },
+        {
+          "titel": "De overgang naar het aparte afsprakensysteem is onaangekondigd",
+          "toelichting": "De lezer klikt door naar een omgeving die er anders uitziet en een inlog of ander taalgebruik hanteert, zonder dat de pagina dat aankondigt. Dat leidt tot twijfel of men nog op de juiste, officiële plek is.",
+          "citaat_ids": [
+            "f019",
+            "f023",
+            "f027"
+          ],
+          "suggesties": [
+            "Zeg vóór de knop wat er gebeurt: 'U gaat naar ons afsprakensysteem. U heeft hiervoor uw v-nummer en een e-mailadres nodig.'",
+            "Noem welke gegevens de bezoeker bij de hand moet hebben, zodat men niet halverwege afhaakt."
+          ]
+        },
+        {
+          "titel": "Onduidelijk wie er mee moet komen naar de afspraak",
+          "toelichting": "Vooral bij aanvragen voor kinderen is onduidelijk of iedereen fysiek aanwezig moet zijn, en of er per persoon een afspraak nodig is.",
+          "citaat_ids": [
+            "f020",
+            "f024",
+            "f028"
+          ],
+          "suggesties": [
+            "Zet in één zin of er per aanvrager een aparte afspraak nodig is, ook voor baby's en kinderen.",
+            "Benoem expliciet wie er mee moet: de aanvrager zelf, beide ouders, of één ouder met een toestemmingsformulier."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kosten-paspoort-idkaart",
+      "titel": "Kosten van een paspoort of identiteitskaart in het buitenland",
+      "url": "https://www.nederlandwereldwijd.nl/paspoort-id-kaart/kosten",
+      "samenvatting": "De prijs staat in euro's, maar er wordt lokaal en op een andere manier betaald; dat verschil wordt niet overbrugd.",
+      "oorzaken": [
+        {
+          "titel": "Het bedrag staat in euro's terwijl er lokaal betaald wordt",
+          "toelichting": "Bezoekers weten niet welk bedrag zij werkelijk kwijt zijn, welke wisselkoers geldt en wanneer die wordt vastgesteld.",
+          "citaat_ids": [
+            "f029",
+            "f030",
+            "f034"
+          ],
+          "suggesties": [
+            "Zet per post het actuele lokale bedrag erbij, met de datum waarop dat is vastgesteld en hoe vaak het wordt bijgewerkt.",
+            "Leg in één zin uit welke wisselkoers wordt gebruikt en op welk moment die geldt."
+          ]
+        },
+        {
+          "titel": "Welke betaalmiddelen geaccepteerd worden, verschilt per post en staat er niet bij",
+          "toelichting": "Mensen reizen soms uren naar een post en willen niet voor een gesloten deur staan omdat hun betaalkaart niet werkt.",
+          "citaat_ids": [
+            "f031",
+            "f035",
+            "f038"
+          ],
+          "suggesties": [
+            "Zet per post welke betaalmethoden werken: contant, pin, creditcard, en of er een toeslag geldt.",
+            "Waarschuw expliciet als contant betalen niet mogelijk is; dat is voor veel posten de verrassing."
+          ]
+        },
+        {
+          "titel": "Onduidelijk of je geld terugkrijgt bij afwijzing of annulering",
+          "toelichting": "Er wordt vooraf betaald, maar de pagina zegt niets over restitutie. Dat roept wantrouwen op bij een relatief groot bedrag.",
+          "citaat_ids": [
+            "f032",
+            "f036"
+          ],
+          "suggesties": [
+            "Benoem expliciet dat de kosten leges zijn en wat er gebeurt als de aanvraag wordt afgewezen of geannuleerd.",
+            "Zeg het ook als er géén restitutie is; onduidelijkheid kost meer vertrouwen dan een onwelkom antwoord."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paspoort-kind-toestemming",
+      "titel": "Paspoort of identiteitskaart aanvragen voor een kind",
+      "url": "https://www.nederlandwereldwijd.nl/paspoort-id-kaart/kind",
+      "samenvatting": "Bij gescheiden of niet-gehuwde ouders is de toestemmingsregel de grootste struikelblok.",
+      "oorzaken": [
+        {
+          "titel": "Bij gescheiden ouders is niet duidelijk wie moet tekenen en wat er moet worden aangetoond",
+          "toelichting": "De regel 'beide gezaghebbende ouders' wordt genoemd, maar niet wat te doen als de andere ouder onbereikbaar is, of hoe gezag wordt aangetoond vanuit het buitenland.",
+          "citaat_ids": [
+            "f039",
+            "f040",
+            "f044",
+            "f049"
+          ],
+          "suggesties": [
+            "Beschrijf de drie situaties apart: beide ouders beschikbaar, één ouder met eenhoofdig gezag, en een ouder die niet meewerkt of onvindbaar is.",
+            "Zet erbij welk bewijsstuk van gezag gevraagd wordt en hoe je dat vanuit het buitenland krijgt."
+          ]
+        },
+        {
+          "titel": "De geldigheidsduur van een kinderpaspoort verrast mensen",
+          "toelichting": "Bezoekers rekenen op tien jaar en ontdekken pas achteraf dat een document voor een kind vijf jaar geldig is.",
+          "citaat_ids": [
+            "f041",
+            "f045"
+          ],
+          "suggesties": [
+            "Zet de geldigheidsduur van vijf jaar naast de kosten in plaats van verderop in de tekst.",
+            "Voeg één zin toe over wanneer een kind overgaat naar een document van tien jaar."
+          ]
+        },
+        {
+          "titel": "Onduidelijk of het kind zelf mee moet komen",
+          "toelichting": "Ouders met jonge kinderen of grote reisafstanden willen dit vooraf weten, inclusief of er een handtekening of foto van het kind nodig is.",
+          "citaat_ids": [
+            "f042",
+            "f046",
+            "f050"
+          ],
+          "suggesties": [
+            "Zeg direct dat het kind zelf aanwezig moet zijn, ook een baby, en waarom (vingerafdrukken en gelijkenis).",
+            "Benoem vanaf welke leeftijd een handtekening van het kind wordt gevraagd."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spoedpaspoort-noodpaspoort",
+      "titel": "Spoedaanvraag, nooddocument en laissez-passer",
+      "url": "https://www.nederlandwereldwijd.nl/paspoort-id-kaart/spoed",
+      "samenvatting": "De begrippen lopen door elkaar, waardoor mensen in tijdsnood niet weten wat zij moeten aanvragen.",
+      "oorzaken": [
+        {
+          "titel": "Het verschil tussen een spoedaanvraag, een nooddocument en een laissez-passer is niet uitgelegd",
+          "toelichting": "Drie begrippen staan naast elkaar zonder dat wordt gezegd wanneer welk document past. Juist deze bezoekers hebben haast en lezen niet door.",
+          "citaat_ids": [
+            "f051",
+            "f052",
+            "f056",
+            "f060"
+          ],
+          "suggesties": [
+            "Zet de drie documenten in één vergelijking: waarvoor bedoeld, hoe lang geldig, hoe snel te krijgen, wat het kost.",
+            "Begin met de vraag van de lezer ('wanneer moet u vertrekken?') in plaats van met de naam van het document."
+          ]
+        },
+        {
+          "titel": "Niet duidelijk wanneer je in aanmerking komt voor spoed",
+          "toelichting": "Bezoekers kunnen niet inschatten of hun situatie 'spoed' is en durven daardoor geen aanvraag te starten.",
+          "citaat_ids": [
+            "f053",
+            "f057"
+          ],
+          "suggesties": [
+            "Geef twee of drie concrete voorbeelden van situaties die wel en niet als spoed gelden.",
+            "Zeg wie de beslissing neemt en of daar bewijs voor nodig is."
+          ]
+        },
+        {
+          "titel": "Buiten kantooruren is er geen zichtbare route",
+          "toelichting": "Nood ontstaat in het weekend. De pagina gaat uit van openingstijden en biedt geen zichtbaar alternatief.",
+          "citaat_ids": [
+            "f054",
+            "f058",
+            "f061"
+          ],
+          "suggesties": [
+            "Zet het nummer van de 24/7-lijn bovenaan de pagina, niet onderaan bij de contactgegevens.",
+            "Benoem expliciet wat er in het weekend wél en niet mogelijk is."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paspoort-verloren-gestolen",
+      "titel": "Paspoort verloren of gestolen in het buitenland",
+      "url": "https://www.nederlandwereldwijd.nl/paspoort-id-kaart/verloren-gestolen",
+      "samenvatting": "De volgorde van de stappen ontbreekt, terwijl juist deze bezoeker in paniek en onder tijdsdruk leest.",
+      "oorzaken": [
+        {
+          "titel": "De volgorde van de stappen is niet duidelijk",
+          "toelichting": "Aangifte, melden van vermissing en een nieuw document aanvragen worden genoemd, maar niet als opeenvolgende stappen. De lezer weet niet waar te beginnen.",
+          "citaat_ids": [
+            "f062",
+            "f063",
+            "f067",
+            "f071"
+          ],
+          "suggesties": [
+            "Maak er een genummerde lijst van: 1. aangifte bij de lokale politie, 2. vermissing melden, 3. afspraak maken, 4. vervangend document aanvragen.",
+            "Zet per stap wat je nodig hebt en hoeveel tijd het kost."
+          ]
+        },
+        {
+          "titel": "Geen antwoord voor wie binnen een dag moet vliegen",
+          "toelichting": "De grootste groep op deze pagina heeft acute tijdsdruk, maar de tekst gaat uit van een normale procedure.",
+          "citaat_ids": [
+            "f064",
+            "f068"
+          ],
+          "suggesties": [
+            "Zet direct bovenaan een blok 'Moet u binnen 48 uur reizen?' met de kortste route en het telefoonnummer.",
+            "Link vanuit dat blok naar het nooddocument, in plaats van de lezer de hele pagina te laten doorzoeken."
+          ]
+        },
+        {
+          "titel": "De gevolgen van de vermissing worden niet benoemd",
+          "toelichting": "Bezoekers vragen zich af of het oude document nog opduikt in systemen, of zij extra betalen, en of herhaald verlies consequenties heeft.",
+          "citaat_ids": [
+            "f065",
+            "f069",
+            "f072"
+          ],
+          "suggesties": [
+            "Leg uit dat een vermist document definitief ongeldig wordt, ook als het later terugkomt.",
+            "Benoem of er extra kosten of een kortere geldigheid gelden bij herhaald verlies."
+          ]
+        }
+      ]
+    }
+  ],
+  "feedback": [
+    {
+      "id": "f001",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Ik woon in Spanje en na tien minuten lezen weet ik nog steeds niet of ik naar het consulaat in Madrid moet of naar de honorair consul hier in de buurt."
+    },
+    {
+      "id": "f002",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Er staat 'bij een Nederlandse ambassade of consulaat' maar niet welke voor Australie. Ik woon negenhonderd kilometer van de dichtstbijzijnde stad."
+    },
+    {
+      "id": "f003",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Welke balie in mijn land? Precies die vraag wordt op deze pagina niet beantwoord."
+    },
+    {
+      "id": "f004",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Ik kan nergens vinden hoeveel weken het duurt voordat mijn paspoort klaar is."
+    },
+    {
+      "id": "f005",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Hoe lang moet ik wachten? Staat er niet bij. Ik moet in oktober reizen en durf nu geen ticket te boeken."
+    },
+    {
+      "id": "f006",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": true,
+      "tekst": "Duidelijke uitleg over welke documenten ik mee moet nemen."
+    },
+    {
+      "id": "f007",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Ik sta niet meer ingeschreven in Nederland. Kan ik dan nog een identiteitskaart krijgen buiten de EU? Dat blijft onduidelijk."
+    },
+    {
+      "id": "f008",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Voor mij als bewoner buiten de EU is het verschil tussen een paspoort en een identiteitskaart totaal niet uitgelegd."
+    },
+    {
+      "id": "f009",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "De pagina verwijst door naar 'uw vertegenwoordiging' maar die link doet het bij mij niet."
+    },
+    {
+      "id": "f010",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Ik wil weten waar ik in Brazilie terechtkan. Ik kom alleen algemene teksten tegen."
+    },
+    {
+      "id": "f011",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Doorlooptijd ontbreekt volledig. Bij de gemeente in Nederland weet je gewoon dat het vijf werkdagen is."
+    },
+    {
+      "id": "f012",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": true,
+      "tekst": "Prima pagina, ik heb gevonden wat ik zocht."
+    },
+    {
+      "id": "f013",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Waarom staat er niet gewoon een lijst met landen en adressen op deze pagina?"
+    },
+    {
+      "id": "f014",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Heb ik een afspraak nodig of kan ik gewoon langsgaan? Dat mis ik."
+    },
+    {
+      "id": "f015",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Kan ik in Canada een identiteitskaart aanvragen of alleen een paspoort? Geen antwoord gevonden."
+    },
+    {
+      "id": "f016",
+      "pagina": "paspoort-aanvragen-buitenland",
+      "beantwoord": false,
+      "tekst": "Hoe lang van tevoren moet ik dit regelen? Nergens genoemd."
+    },
+    {
+      "id": "f017",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Al drie weken geen enkele afspraak beschikbaar en de pagina zegt niet wat ik dan moet doen."
+    },
+    {
+      "id": "f018",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "De agenda is leeg. Komen er nog plekken bij en wanneer dan? Daar lees ik niets over."
+    },
+    {
+      "id": "f019",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Ik klik op de knop en beland ineens op een heel andere website die er niet uitziet als de rijksoverheid. Is dat de goede plek?"
+    },
+    {
+      "id": "f020",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Moet ik voor mijn twee kinderen aparte afspraken maken of kan het in een keer?"
+    },
+    {
+      "id": "f021",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Geen plek te vinden, en nergens staat of ik het bij een andere post mag proberen."
+    },
+    {
+      "id": "f022",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": true,
+      "tekst": "Afspraak maken ging vlot en de uitleg klopte."
+    },
+    {
+      "id": "f023",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Het afsprakensysteem vraagt om gegevens die ik niet bij de hand had. Dat had op de pagina mogen staan."
+    },
+    {
+      "id": "f024",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Moet mijn baby van vier maanden echt zelf meekomen? Ik kan het antwoord niet vinden."
+    },
+    {
+      "id": "f025",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": true,
+      "tekst": "Handig dat de openingstijden erbij staan."
+    },
+    {
+      "id": "f026",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Mijn paspoort verloopt over zes weken en er is geen afspraak. Wat nu? Daar geeft deze pagina geen antwoord op."
+    },
+    {
+      "id": "f027",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Waarom moet ik inloggen op een systeem waar niet is uitgelegd waar het voor dient?"
+    },
+    {
+      "id": "f028",
+      "pagina": "afspraak-ambassade-consulaat",
+      "beantwoord": false,
+      "tekst": "Moeten beide ouders mee naar de afspraak? Ik lees het nergens duidelijk."
+    },
+    {
+      "id": "f029",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "De prijs staat in euro's maar ik moet in lokale valuta betalen. Welk bedrag ben ik nu echt kwijt?"
+    },
+    {
+      "id": "f030",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "Welke wisselkoers wordt gebruikt en wanneer wordt die vastgesteld? Geen woord daarover."
+    },
+    {
+      "id": "f031",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "Kan ik met creditcard betalen aan de balie? Dat had ik graag vooraf geweten."
+    },
+    {
+      "id": "f032",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "Krijg ik het bedrag terug als mijn aanvraag wordt afgewezen? Staat er niet bij."
+    },
+    {
+      "id": "f033",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": true,
+      "tekst": "Prijzen waren duidelijk vermeld."
+    },
+    {
+      "id": "f034",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "Het bedrag dat ik aan de balie moest betalen was hoger dan wat op deze pagina stond."
+    },
+    {
+      "id": "f035",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "Ik heb twee uur gereden en kon niet contant betalen. Dat stond nergens."
+    },
+    {
+      "id": "f036",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "Als ik mijn afspraak annuleer, ben ik dan mijn geld kwijt? Onduidelijk."
+    },
+    {
+      "id": "f037",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": true,
+      "tekst": "Goed dat het verschil in kosten tussen kind en volwassene erbij staat."
+    },
+    {
+      "id": "f038",
+      "pagina": "kosten-paspoort-idkaart",
+      "beantwoord": false,
+      "tekst": "Welke betaalmethode werkt bij deze post? Per land lijkt het te verschillen maar dat staat er niet."
+    },
+    {
+      "id": "f039",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Ik ben gescheiden en de vader woont in een ander land. Wie moet er tekenen en hoe regel ik dat?"
+    },
+    {
+      "id": "f040",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "De andere ouder werkt niet mee. Op deze pagina staat alleen dat beide ouders moeten tekenen, en verder niets."
+    },
+    {
+      "id": "f041",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Ik dacht dat een paspoort tien jaar geldig was. Pas achteraf hoorde ik dat het voor mijn dochter vijf jaar is."
+    },
+    {
+      "id": "f042",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Moet mijn zoon van twee zelf mee naar de balie? Dat is een dagreis voor ons."
+    },
+    {
+      "id": "f043",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": true,
+      "tekst": "Het toestemmingsformulier was makkelijk te downloaden."
+    },
+    {
+      "id": "f044",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Hoe toon ik vanuit het buitenland aan dat ik eenhoofdig gezag heb? Daar gaat de pagina niet op in."
+    },
+    {
+      "id": "f045",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Waarom is een kinderpaspoort korter geldig? En vanaf welke leeftijd verandert dat?"
+    },
+    {
+      "id": "f046",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Moet mijn kind zelf een handtekening zetten? Ze is negen."
+    },
+    {
+      "id": "f047",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": true,
+      "tekst": "Duidelijk welke pasfoto-eisen er gelden voor baby's."
+    },
+    {
+      "id": "f048",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Mijn kind heeft ook een andere nationaliteit. Verandert dat iets? Geen antwoord."
+    },
+    {
+      "id": "f049",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Wat als de andere ouder onvindbaar is? Dan loop ik vast en de pagina biedt geen route."
+    },
+    {
+      "id": "f050",
+      "pagina": "paspoort-kind-toestemming",
+      "beantwoord": false,
+      "tekst": "Moeten we allebei mee met het kind, of is een formulier genoeg? Ik blijf twijfelen."
+    },
+    {
+      "id": "f051",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Wat is het verschil tussen een noodpaspoort en een spoedaanvraag? Ik lees drie namen door elkaar."
+    },
+    {
+      "id": "f052",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Laissez-passer, nooddocument, spoed. Welke heb ik nodig als ik overmorgen moet vliegen?"
+    },
+    {
+      "id": "f053",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Kom ik in aanmerking voor spoed als ik voor een begrafenis moet reizen? Daar staat niets over."
+    },
+    {
+      "id": "f054",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Het is zaterdag en ik kan nergens vinden wie ik nu kan bereiken."
+    },
+    {
+      "id": "f055",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": true,
+      "tekst": "Goede uitleg over de geldigheid van het nooddocument."
+    },
+    {
+      "id": "f056",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Met welk document mag ik wel en niet naar de Verenigde Staten reizen? Dat onderscheid mis ik volledig."
+    },
+    {
+      "id": "f057",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Wie bepaalt of mijn situatie spoed is, en moet ik dat bewijzen?"
+    },
+    {
+      "id": "f058",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "In het weekend is alles dicht volgens deze pagina. Is er dan echt niets mogelijk?"
+    },
+    {
+      "id": "f059",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": true,
+      "tekst": "Fijn dat de kosten van het nooddocument erbij staan."
+    },
+    {
+      "id": "f060",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Ik heb haast en moet drie alinea's lezen voordat duidelijk wordt welk document bij mijn situatie past. Dat lukt me niet."
+    },
+    {
+      "id": "f061",
+      "pagina": "spoedpaspoort-noodpaspoort",
+      "beantwoord": false,
+      "tekst": "Het noodnummer staat helemaal onderaan. Dat vond ik pas na vijf minuten zoeken."
+    },
+    {
+      "id": "f062",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Moet ik eerst aangifte doen of eerst de vermissing melden? De volgorde is me niet duidelijk."
+    },
+    {
+      "id": "f063",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Er staan allemaal dingen die ik moet doen, maar niet in welke volgorde en wat eerst moet."
+    },
+    {
+      "id": "f064",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Mijn vlucht is morgenochtend en mijn paspoort is gestolen. Deze pagina gaat uit van weken de tijd."
+    },
+    {
+      "id": "f065",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Als ik mijn paspoort later terugvind, mag ik het dan weer gebruiken? Geen antwoord."
+    },
+    {
+      "id": "f066",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": true,
+      "tekst": "De uitleg over aangifte bij de lokale politie was helder."
+    },
+    {
+      "id": "f067",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Wat heb ik nodig voor de aangifte als ik geen enkel document meer heb? Daar loopt het vast."
+    },
+    {
+      "id": "f068",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Kan ik nog vliegen met alleen een proces-verbaal? Dat is de vraag waarvoor ik hier kwam."
+    },
+    {
+      "id": "f069",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Betaal ik extra omdat het document kwijt is? Dat wordt niet genoemd."
+    },
+    {
+      "id": "f070",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": true,
+      "tekst": "Goed dat er staat dat je zo snel mogelijk moet melden."
+    },
+    {
+      "id": "f071",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Ik weet niet waar ik moet beginnen. Een stappenplan zou enorm helpen."
+    },
+    {
+      "id": "f072",
+      "pagina": "paspoort-verloren-gestolen",
+      "beantwoord": false,
+      "tekst": "Krijg ik een korter geldig paspoort omdat dit de tweede keer is? Ik kan het niet vinden."
+    }
+  ]
+}</script>
+<script>
+(function () {
+  "use strict";
+
+  var data = JSON.parse(document.getElementById("feedforward-data").textContent);
+  var scherm = document.getElementById("scherm");
+
+  // Feedback op id, zodat een citaat nooit los kan komen te staan van de bron.
+  var perId = {};
+  data.feedback.forEach(function (f) { perId[f.id] = f; });
+
+  function vanPagina(paginaId) {
+    return data.feedback.filter(function (f) { return f.pagina === paginaId; });
+  }
+  function zonderAntwoord(items) {
+    return items.filter(function (f) { return !f.beantwoord; });
+  }
+
+  function el(tag, opties) {
+    var n = document.createElement(tag);
+    if (opties && opties.tekst) n.textContent = opties.tekst;
+    if (opties && opties.klasse) n.className = opties.klasse;
+    if (opties && opties.href) n.href = opties.href;
+    return n;
+  }
+
+  function toonOverzicht() {
+    document.title = "Feedforward — verbetersuggesties uit bezoekersfeedback";
+    scherm.textContent = "";
+
+    var h2 = el("h2", { tekst: "Pagina's over reisdocumenten" });
+    var sub = el("p", { klasse: "subtitel" });
+    sub.textContent = data.paginas.length + " pagina's, " + data.feedback.length +
+      " feedbackitems uit de periode " + data.meta.periode + ". Kies een pagina.";
+    scherm.appendChild(h2);
+    scherm.appendChild(sub);
+
+    var lijst = el("ul", { klasse: "paginas" });
+
+    data.paginas
+      .map(function (p) {
+        var items = vanPagina(p.id);
+        return { pagina: p, totaal: items.length, nee: zonderAntwoord(items).length };
+      })
+      .sort(function (a, b) { return b.nee - a.nee; })
+      .forEach(function (r) {
+        var li = el("li", { klasse: "kaart" });
+        var a = el("a", { klasse: "kaartlink", href: "#/" + r.pagina.id });
+
+        a.appendChild(el("h3", { tekst: r.pagina.titel }));
+        a.appendChild(el("p", { tekst: r.pagina.samenvatting }));
+
+        var cijfers = el("div", { klasse: "cijfers" });
+        var c1 = el("span");
+        c1.appendChild(document.createTextNode("Kreeg geen antwoord: "));
+        c1.appendChild(el("b", { tekst: r.nee + " van de " + r.totaal }));
+        cijfers.appendChild(c1);
+        cijfers.appendChild(el("span", {
+          tekst: r.pagina.oorzaken.length + " herkende oorzaken"
+        }));
+        a.appendChild(cijfers);
+
+        li.appendChild(a);
+        lijst.appendChild(li);
+      });
+
+    scherm.appendChild(lijst);
+  }
+
+  function suggestiesAlsTekst(pagina) {
+    var regels = ["Verbetersuggesties — " + pagina.titel, pagina.url, ""];
+    pagina.oorzaken.forEach(function (o, i) {
+      regels.push((i + 1) + ". " + o.titel + " (" + o.citaat_ids.length + " signalen)");
+      o.suggesties.forEach(function (s) { regels.push("   - " + s); });
+      regels.push("");
+    });
+    regels.push("Bron: " + data.meta.bron + ", periode " + data.meta.periode + ".");
+    regels.push("Let op: door AI gegenereerd, niet redactioneel gecontroleerd.");
+    return regels.join("\n");
+  }
+
+  function toonPagina(pagina) {
+    document.title = pagina.titel + " — Feedforward";
+    scherm.textContent = "";
+
+    var terug = el("a", { klasse: "terug", href: "#/", tekst: "← Alle pagina's" });
+    scherm.appendChild(terug);
+
+    var items = vanPagina(pagina.id);
+    var nee = zonderAntwoord(items).length;
+
+    var kop = el("div", { klasse: "paginakop" });
+    kop.appendChild(el("h2", { tekst: pagina.titel }));
+    var cijfers = el("p", { klasse: "cijfers" });
+    cijfers.appendChild(el("span", { tekst: items.length + " feedbackitems geanalyseerd" }));
+    var c2 = el("span");
+    c2.appendChild(document.createTextNode("Kreeg geen antwoord: "));
+    c2.appendChild(el("b", { tekst: nee + " van de " + items.length }));
+    cijfers.appendChild(c2);
+    kop.appendChild(cijfers);
+    var bron = el("p", { klasse: "cijfers bron" });
+    var bronLink = el("a", { href: pagina.url, tekst: pagina.url });
+    bronLink.rel = "noopener";
+    bron.appendChild(document.createTextNode("Pagina: "));
+    bron.appendChild(bronLink);
+    kop.appendChild(bron);
+    scherm.appendChild(kop);
+
+    pagina.oorzaken.forEach(function (o) {
+      var sectie = el("section", { klasse: "oorzaak" });
+      sectie.appendChild(el("h3", { tekst: o.titel }));
+      sectie.appendChild(el("p", {
+        klasse: "telling",
+        tekst: "Teruggezien in " + o.citaat_ids.length + " van de " + items.length + " reacties"
+      }));
+      sectie.appendChild(el("p", { klasse: "toelichting", tekst: o.toelichting }));
+
+      var bewijs = el("div", { klasse: "bewijs" });
+      bewijs.appendChild(el("h4", { tekst: "Wat bezoekers schreven" }));
+      // Eerste twee citaten direct zichtbaar, de rest inklapbaar.
+      o.citaat_ids.slice(0, 2).forEach(function (id) {
+        bewijs.appendChild(citaat(id));
+      });
+      if (o.citaat_ids.length > 2) {
+        var meer = el("details", { klasse: "ruwe" });
+        var sum = el("summary", {
+          tekst: "Nog " + (o.citaat_ids.length - 2) + " vergelijkbare reacties"
+        });
+        meer.appendChild(sum);
+        o.citaat_ids.slice(2).forEach(function (id) { meer.appendChild(citaat(id)); });
+        bewijs.appendChild(meer);
+      }
+      sectie.appendChild(bewijs);
+
+      var advies = el("div", { klasse: "advies" });
+      advies.appendChild(el("h4", { tekst: "Verbetersuggesties" }));
+      var ol = el("ol", { klasse: "suggesties" });
+      o.suggesties.forEach(function (s) { ol.appendChild(el("li", { tekst: s })); });
+      advies.appendChild(ol);
+      sectie.appendChild(advies);
+
+      scherm.appendChild(sectie);
+    });
+
+    var knop = el("button", { klasse: "kopieer", tekst: "Kopieer alle suggesties" });
+    knop.type = "button";
+    knop.addEventListener("click", function () {
+      kopieer(suggestiesAlsTekst(pagina), knop);
+    });
+    scherm.appendChild(knop);
+  }
+
+  function citaat(id) {
+    var f = perId[id];
+    var bq = el("blockquote");
+    bq.appendChild(el("p", { tekst: "“" + f.tekst + "”" }));
+    bq.appendChild(el("footer", {
+      tekst: "Feedback " + f.id + " · " + (f.beantwoord ? "kreeg wel antwoord" : "kreeg geen antwoord")
+    }));
+    return bq;
+  }
+
+  function kopieer(tekst, knop) {
+    function gelukt() {
+      var was = knop.textContent;
+      knop.textContent = "Gekopieerd";
+      setTimeout(function () { knop.textContent = was; }, 2000);
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(tekst).then(gelukt, function () { viaVeld(tekst, gelukt); });
+    } else {
+      viaVeld(tekst, gelukt);
+    }
+  }
+
+  // Terugval voor browsers of een file:// -context zonder clipboard-API.
+  function viaVeld(tekst, gelukt) {
+    var ta = document.createElement("textarea");
+    ta.value = tekst;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); gelukt(); } catch (e) { ta.style.left = "0"; }
+    document.body.removeChild(ta);
+  }
+
+  function route() {
+    var id = (location.hash || "").replace(/^#\/?/, "");
+    var pagina = data.paginas.filter(function (p) { return p.id === id; })[0];
+    if (pagina) { toonPagina(pagina); } else { toonOverzicht(); }
+    window.scrollTo(0, 0);
+  }
+
+  function vulVerantwoording() {
+    var dl = document.getElementById("verantwoording");
+    var rijen = [
+      ["Bron", data.meta.bron],
+      ["Onderwerp", data.meta.onderwerp],
+      ["Periode", data.meta.periode],
+      ["Export", data.meta.export_datum],
+      ["Analyse gemaakt op", data.meta.analyse_datum],
+      ["Omvang", data.feedback.length + " feedbackitems over " + data.paginas.length + " pagina's"]
+    ];
+    rijen.forEach(function (r) {
+      dl.appendChild(el("dt", { tekst: r[0] }));
+      dl.appendChild(el("dd", { tekst: r[1] }));
+    });
+    document.getElementById("disclaimer").textContent = data.meta.disclaimer;
+  }
+
+  window.addEventListener("hashchange", route);
+  vulVerantwoording();
+  route();
+})();
+</script>
+</body>
+</html>
