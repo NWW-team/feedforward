@@ -1,0 +1,11 @@
+# Ruwe Mopinion-exports horen NIET in deze repo.
+# De repo is (of wordt) publiek en git bewaart bestanden ook na verwijderen.
+*.csv
+*.CSV
+*.xlsx
+*.xls
+*.tsv
+
+# Rommel
+node_modules/
+.DS_Store
