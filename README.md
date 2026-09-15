@@ -21,7 +21,8 @@ database en geen API-sleutel — daarom kan het bestand ook los geopend worden.
 | Bestand | Wat het is |
 |---|---|
 | `index.html` | De app én de data |
-| `PROMPT.md` | De instructie waarmee de analyse opnieuw te maken is |
+| `PROMPT.md` | De instructie waarmee de analyse opnieuw te maken is (Claude Code) |
+| `PROMPT-CHAT.md` | Dezelfde instructie als losse prompt, voor een chatmodel |
 | `controle.py` | Controleert dat elk citaat in de app echt in de dataset staat |
 | `data/README.md` | Herkomst van de data en hoe je echte data erin zet |
 | `STRATEGY.md` | De strategie achter het product |

@@ -1,7 +1,8 @@
 # Analyse-instructie
 
 Hiermee maak je het datablok in `index.html` opnieuw. Gebruik dit in een Claude Code-sessie
-op deze repository.
+op deze repository. Werk je met een chatmodel dat deze bestanden niet kan lezen, gebruik dan
+[`PROMPT-CHAT.md`](PROMPT-CHAT.md): dezelfde opdracht, maar als één blok tekst om te plakken.
 
 ## Wat je aanlevert
 
